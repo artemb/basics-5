@@ -130,7 +130,7 @@ class GridGame:
             self._redraw()
 
     def open_lock(self, *codes):
-        self.message = f"You are trying to open the lock with code: {', '.join(codes)}."
+        self.message = f"You are trying to open the lock with code: {', '.join(str(codes))}."
 
         self._redraw()
         sleep(3)
