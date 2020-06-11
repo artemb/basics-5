@@ -130,7 +130,10 @@ class GridGame:
             self._redraw()
 
     def open_lock(self, *codes):
-        sleep(.5)
+        self.message = f"You are trying to open the lock with code: {', '.join(codes)}."
+
+        self._redraw()
+        sleep(3)
         # Check if we are in front of a lock
         if self.grid[self.col + 1, self.row] != LOCK:
             self.message = "There is no lock in front of you"
