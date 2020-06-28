@@ -6,6 +6,10 @@ DIAMOND = 'V'
 LOCK = 'L'
 GREEN_LOCK = 'G'
 MESSAGEBOARD = 'M'
+ARROW_UP = '^'
+ARROW_DOWN = 'v'
+ARROW_RIGHT = '>'
+ARROW_LEFT = '<'
 FRIEND = 'F'
 
 
@@ -45,7 +49,7 @@ class GridMap:
         while col < self.cols:
             if (col, row) in self.objects:
                 obj = self[col, row]
-                if obj not in (WALL, PLAYER, MESSAGEBOARD):
+                if obj not in (WALL, PLAYER, MESSAGEBOARD, ARROW_UP, ARROW_DOWN, ARROW_RIGHT, ARROW_LEFT):
                     return obj
             col += 1
 
