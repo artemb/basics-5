@@ -7,7 +7,7 @@ from pygame.transform import scale, flip, rotate
 
 from games2._lib.grid_map import CELL, WALL, DIAMOND, LOCK, FRIEND, GridMap, GREEN_LOCK, ARROW_DOWN, ARROW_UP, \
     ARROW_LEFT, ARROW_RIGHT, SLIME, DOOR, KEY
-from games._lib.objects import Lock, Friend
+from games2._lib.objects import Lock, Friend
 
 root = dirname(__file__)
 
@@ -319,9 +319,9 @@ class CodingGame:
         lock = self.get_lock_in_front()
         if not lock.open(*codes):
             self.message = lock.message_wrong_code
-#            if lock.auto_destroys:
-#                self.grid[self.col+1, self.row] = 'X'
-#                self.locks.remove(lock)
+            if lock.auto_destroys:
+                self.grid[self.col+1, self.row] = 'X'
+                self.locks.remove(lock)
             self._redraw()
             sleep(1)
             return False
