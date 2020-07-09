@@ -319,9 +319,9 @@ class CodingGame:
         lock = self.get_lock_in_front()
         if not lock.open(*codes):
             self.message = lock.message_wrong_code
-            if lock.auto_destroys:
-                self.grid[self.col+1, self.row] = 'X'
-                self.locks.remove(lock)
+#            if lock.auto_destroys:
+#                self.grid[self.col+1, self.row] = 'X'
+#                self.locks.remove(lock)
             self._redraw()
             sleep(1)
             return False
