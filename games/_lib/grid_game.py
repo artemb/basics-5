@@ -3,7 +3,7 @@ from time import sleep
 import pygame
 from pygame.transform import scale, flip
 
-from games._lib.grid_map import CELL, WALL, DIAMOND, LOCK, FRIEND
+from games2._lib.grid_map import CELL, WALL, DIAMOND, LOCK, FRIEND
 
 WALL_TILE = pygame.image.load("../_lib/images/wall.png")
 DIAMOND_TILE = pygame.image.load('../_lib/images/diamond.png')

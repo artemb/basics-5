@@ -11,6 +11,9 @@ ARROW_DOWN = 'v'
 ARROW_RIGHT = '>'
 ARROW_LEFT = '<'
 FRIEND = 'F'
+SLIME = 'S'
+KEY = 'K'
+DOOR = 'D'
 
 
 class GridMap:
@@ -49,7 +52,7 @@ class GridMap:
         while col < self.cols:
             if (col, row) in self.objects:
                 obj = self[col, row]
-                if obj not in (WALL, PLAYER, MESSAGEBOARD, ARROW_UP, ARROW_DOWN, ARROW_RIGHT, ARROW_LEFT):
+                if obj not in (WALL, PLAYER, MESSAGEBOARD, ARROW_UP, ARROW_DOWN, ARROW_RIGHT, ARROW_LEFT, SLIME, DOOR, KEY):
                     return obj
             col += 1
 

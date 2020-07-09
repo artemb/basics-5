@@ -6,8 +6,8 @@ import pygame
 from pygame.transform import scale, flip, rotate
 
 from games2._lib.grid_map import CELL, WALL, DIAMOND, LOCK, FRIEND, GridMap, GREEN_LOCK, ARROW_DOWN, ARROW_UP, \
-    ARROW_LEFT, ARROW_RIGHT
-from games2._lib.objects import Lock, Friend
+    ARROW_LEFT, ARROW_RIGHT, SLIME, DOOR, KEY
+from games._lib.objects import Lock, Friend
 
 root = dirname(__file__)
 
@@ -25,6 +25,9 @@ ARROW_UP_TILE = scale(pygame.image.load(join(root, 'images', 'arrows.png')), (64
 ARROW_DOWN_TILE = flip(ARROW_UP_TILE.copy(), False, True)
 ARROW_LEFT_TILE = rotate(ARROW_UP_TILE.copy(), 90)
 ARROW_RIGHT_TILE = rotate(ARROW_UP_TILE.copy(), -90)
+KEY_TILE = scale(pygame.image.load(join(root, 'images', 'key.png')), (64, 64))
+DOOR_TILE = scale(pygame.image.load(join(root, 'images', 'door.png')), (64, 64))
+SLIME_TILE = pygame.transform.scale(pygame.image.load(join(root, 'images', 'slime.png')), (64, 64))
 MESSAGEBOARD = 'M'
 
 FPS = 120
@@ -43,12 +46,14 @@ class CodingGame:
         self.won = False
         self.red = False
         self.sliding = False
+        self.keys = 0
         self.message = mapdata['welcomeMessage']
         self.font = pygame.font.Font(join(root, "fonts", "ubuntu-regular.ttf"), 26)
         self.clock = pygame.time.Clock()
 
         self.load_locks()
         self.load_friends()
+        self.load_doors()
 
         self.col, self.row = self.grid.player_col, self.grid.player_row
 
@@ -103,6 +108,16 @@ class CodingGame:
             friend = Friend(data['data'], data['message'])
             self.friends.append(friend)
 
+    def load_doors(self):
+        self.doors = []
+
+        if 'doors' not in self.mapdata:
+            return
+
+        for door in self.mapdata['doors']:
+            self.doors.append(door)
+
+
     def _redraw(self, player_x=None, player_y=None):
         # This is required so that the app does not appear hanged
         for event in pygame.event.get():
@@ -144,6 +159,12 @@ class CodingGame:
                 self.screen.blit(ARROW_LEFT_TILE, self.grid.rect(pos))
             elif obj == ARROW_RIGHT:
                 self.screen.blit(ARROW_RIGHT_TILE, self.grid.rect(pos))
+            elif obj == KEY:
+                self.screen.blit(KEY_TILE, self.grid.rect(pos))
+            elif obj == DOOR:
+                self.screen.blit(DOOR_TILE, self.grid.rect(pos))
+            elif obj == SLIME:
+                self.screen.blit(SLIME_TILE, self.grid.rect(pos))
 
 
         # Draw the message board
@@ -216,7 +237,7 @@ class CodingGame:
         newrow = self.row + row_step
 
         # Check for collision
-        if self.grid[newcol, newrow] in (WALL, LOCK, GREEN_LOCK, FRIEND):
+        if self.grid[newcol, newrow] in (WALL, LOCK, GREEN_LOCK, FRIEND, DOOR):
             # Animate that can't move
             self.red = True
             for x in range(6):  # 6 frames, 1/10 sec
@@ -268,6 +289,13 @@ class CodingGame:
             self.message = self.friends[0].message_in_front
             self._redraw()
 
+        # Check if we have stepped on a key
+        if self.grid[self.col, self.row] == KEY:
+            self.message = "You collected a key!"
+            self.keys += 1
+            del self.grid[self.col, self.row]
+            self._redraw()
+
         # Check if we have reached the diamond
         if self.grid[self.col, self.row] == DIAMOND:
             self.message = "Congratulations! You won!!!"
@@ -305,6 +333,28 @@ class CodingGame:
         self._redraw()
         sleep(1)
         return True
+
+    def open_door(self):
+        door = self.grid[self.col+1, self.row]
+        if door != DOOR:
+            self.message = "There is no door to open"
+            self._redraw()
+            return
+
+        door = self.doors.pop(0)
+
+        if self.keys >= door['keysRequired']:
+            self.message = "You opened the door!"
+            del self.grid[self.col+1, self.row]
+            self._redraw()
+            return
+
+        self.message = [
+            "You do not have enough keys to open the door.",
+            f"This door requries {door['keysRequired']} keys.",
+            f"You have collected {self.keys} keys."
+        ]
+        self._redraw()
 
     def ask(self):
         sleep(.5)

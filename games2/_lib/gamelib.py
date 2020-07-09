@@ -53,3 +53,6 @@ def look():
 
 def run():
     game.run()
+
+def open_door():
+    return game.open_door()
